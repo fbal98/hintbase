@@ -28,6 +28,7 @@ export default function CheatSheetGrid({
               </span>
               {isAdmin && (
                 <AddCheatSheetModal
+                  onAddCheatSheet={onUpdateCheatSheet}
                   onUpdateCheatSheet={onUpdateCheatSheet}
                   onDeleteCheatSheet={onDeleteCheatSheet}
                   session={session}
