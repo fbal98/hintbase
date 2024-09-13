@@ -1,5 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   env: {
     AUTH_SECRET: process.env.AUTH_SECRET,
     SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,

@@ -103,7 +103,14 @@ export function HomeContent({ session }: { session: any }) {
             />
           )}
         </div>
-        <CheatSheetGrid cheatSheets={cheatSheets.slice(0, 6)} />
+        <CheatSheetGrid
+          cheatSheets={cheatSheets.slice(0, 6)}
+          isAdmin={false}
+          onAddCheatSheet={() => {}}
+          onUpdateCheatSheet={() => {}}
+          onDeleteCheatSheet={() => {}}
+          session={session}
+        />
         <div className="text-center mt-8">
           <Link href="/cheat-sheets" passHref>
             <Button variant="outline">

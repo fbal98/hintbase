@@ -7,8 +7,8 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Icons } from "@/components/icons";
-import { LoadingSpinner } from "./LoadingSpinner";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { Github } from "lucide-react";
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -43,9 +43,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
             />
           </div>
           <Button disabled={isLoading}>
-            {isLoading && (
-              <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-            )}
+            {isLoading && <LoadingSpinner className="mr-2 h-4 w-4" />}
             Sign In with Email
           </Button>
         </div>
@@ -70,9 +68,9 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
         }}
       >
         {isLoading ? (
-          <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+          <LoadingSpinner className="mr-2 h-4 w-4" /> // Replace Icons.spinner with LoadingSpinner
         ) : (
-          <Icons.gitHub className="mr-2 h-4 w-4" />
+          <Github className="mr-2 h-4 w-4" />
         )}{" "}
         GitHub
       </Button>

@@ -97,6 +97,7 @@ export default function CheatSheetsContent({ session }: { session: any }) {
         <CheatSheetGrid
           cheatSheets={filteredCheatSheets}
           isAdmin={isAdmin}
+          onAddCheatSheet={handleAddCheatSheet}
           onUpdateCheatSheet={handleUpdateCheatSheet}
           onDeleteCheatSheet={handleDeleteCheatSheet}
           session={session}

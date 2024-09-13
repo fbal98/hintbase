@@ -5,6 +5,7 @@ import { AddCheatSheetModal } from "./AddCheatSheetModal";
 interface CheatSheetGridProps {
   cheatSheets: any[];
   isAdmin: boolean;
+  onAddCheatSheet: (cheatSheet: any) => void;
   onUpdateCheatSheet: (updatedCheatSheet: any) => void;
   onDeleteCheatSheet: (id: string) => void;
   session: any;
