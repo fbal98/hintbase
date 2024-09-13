@@ -74,7 +74,7 @@ export default function Footer() {
             <h4 className="text-sm font-semibold mb-3">Connect</h4>
             <div className="flex space-x-4">
               <a
-                href="https://github.com/yourusername"
+                href="https://github.com/fbal98"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-primary transition-colors"
@@ -82,7 +82,7 @@ export default function Footer() {
                 <Github size={20} />
               </a>
               <a
-                href="https://twitter.com/yourusername"
+                href="https://x.com/binbader98"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-primary transition-colors"
