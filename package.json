@@ -11,7 +11,6 @@
   "dependencies": {
     "@auth/supabase-adapter": "^1.4.2",
     "@heroicons/react": "^2.1.5",
-    "@next-auth/supabase-adapter": "^0.2.1",
     "@radix-ui/react-accordion": "^1.2.0",
     "@radix-ui/react-avatar": "^1.1.0",
     "@radix-ui/react-collapsible": "^1.1.0",
