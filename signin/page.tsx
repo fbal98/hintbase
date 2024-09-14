@@ -3,6 +3,7 @@ import Link from "next/link";
 import { UserAuthForm } from "@/components/user-auth-form";
 import Header from "@/app/components/Header";
 import { auth } from "@/auth";
+import SignIn from "@/app/components/SignIn";
 
 export const metadata: Metadata = {
   title: "HintBase - Sign In",
@@ -20,7 +21,7 @@ export default async function SignInPage() {
           <h1 className="text-3xl font-bold text-center mb-6 text-primary">
             Sign in to HintBase
           </h1>
-          <UserAuthForm />
+          <SignIn />
           <p className="mt-4 text-center text-sm text-muted-foreground">
             By signing in, you agree to our{" "}
             <Link
