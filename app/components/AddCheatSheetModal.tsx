@@ -23,18 +23,18 @@ import {
   addCheatSheet,
   updateCheatSheet,
   deleteCheatSheet,
-  getUserIdFromNextAuth,
-  getUserRole,
+  getCheatSheetUserRole, // Update this line
 } from "@/app/lib/cheat-sheets";
 import { useToast } from "@/hooks/use-toast";
 import { emojiOptions } from "@/app/lib/emoji-options";
 import Link from "next/link";
+import { useUser } from "@clerk/nextjs";
+import { Edit } from "lucide-react";
 
 interface AddCheatSheetModalProps {
   onAddCheatSheet: (newCheatSheet: any) => void;
   onUpdateCheatSheet?: (updatedCheatSheet: any) => void;
   onDeleteCheatSheet?: (id: string) => void;
-  session: any;
   cheatSheet?: any; // For editing existing cheat sheets
 }
 
@@ -42,7 +42,6 @@ export function AddCheatSheetModal({
   onAddCheatSheet,
   onUpdateCheatSheet,
   onDeleteCheatSheet,
-  session,
   cheatSheet,
 }: AddCheatSheetModalProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -56,37 +55,30 @@ export function AddCheatSheetModal({
   const [isLoading, setIsLoading] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const { toast } = useToast();
+  const { user } = useUser();
 
   useEffect(() => {
     const checkAdminStatus = async () => {
-      if (session?.user?.email) {
-        const userId = await getUserIdFromNextAuth(session.user.email);
-        if (userId) {
-          const role = await getUserRole(userId);
-          setIsAdmin(role === "admin");
-        }
+      if (user?.id) {
+        const role = await getCheatSheetUserRole(user.id); // Update this line
+        setIsAdmin(role === "admin");
       }
     };
     checkAdminStatus();
-  }, [session]);
+  }, [user]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (session?.user?.email) {
+    if (user?.id) {
       setIsLoading(true);
       try {
-        const userId = await getUserIdFromNextAuth(session.user.email);
-        if (!userId) {
-          throw new Error("User not found");
-        }
-
         const cheatSheetData = {
           title,
           name,
           description,
           icon,
           sections: JSON.parse(jsonInput),
-          added_by: userId,
+          added_by: user.id, // This is now the Clerk user ID
         };
 
         let result;
@@ -151,7 +143,7 @@ export function AddCheatSheetModal({
     }
   };
 
-  if (!session) {
+  if (!user) {
     return null;
   }
 
@@ -159,7 +151,7 @@ export function AddCheatSheetModal({
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button variant="outline">
-          {cheatSheet ? "Edit Cheat Sheet" : "Add New Cheat Sheet"}
+          {cheatSheet ? <Edit className="h-4 w-4" /> : "Add New Cheat Sheet"}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">

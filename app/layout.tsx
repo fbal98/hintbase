@@ -1,9 +1,10 @@
 import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from "next/font/google";
-import Footer from './components/Footer'
 import { Toaster } from "@/components/ui/toaster";
 import { ClerkProvider } from "@clerk/nextjs";
+import { clerkTheme } from "./styles/clerkTheme";
+import { AuthChangeHandler } from "./components/AuthChangeHandler";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -19,11 +20,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider>
+    <ClerkProvider appearance={clerkTheme as any}>
       <html lang="en" className={`${inter.variable} font-sans dark`}>
         <body className="bg-background text-foreground min-h-screen flex flex-col">
-          <main>{children}</main>
-          <Footer />
+          <AuthChangeHandler />
+          <div className="flex-grow flex flex-col">{children}</div>
           <Toaster />
         </body>
       </html>

@@ -1,4 +1,6 @@
-import { supabase, authClient } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase";
+import { getUserRole as getUserRoleFromDB } from "@/app/lib/user-management";
+import { getSupabaseUserId } from "./user-management";
 
 export interface Command {
   name: string;
@@ -40,22 +42,15 @@ export async function getAllCheatSheets(): Promise<CheatSheet[]> {
 export async function addCheatSheet(
   newCheatSheet: Omit<CheatSheet, "id" | "is_deleted">
 ): Promise<CheatSheet | null> {
-  // First, check if the user exists in the next_auth.users table
-  const { data: userData, error: userError } = await authClient
-    .from("users")
-    .select("id")
-    .eq("id", newCheatSheet.added_by)
-    .single();
+  const supabaseUserId = await getSupabaseUserId(newCheatSheet.added_by);
 
-  if (userError || !userData) {
-    console.error("Error verifying user:", userError);
-    throw new Error("User not found or unauthorized");
+  if (!supabaseUserId) {
+    throw new Error("Failed to get Supabase user ID");
   }
 
-  // If the user exists, proceed with adding the cheat sheet
   const { data, error } = await supabase
     .from("cheat_sheets")
-    .insert([{ ...newCheatSheet, is_deleted: false }])
+    .insert([{ ...newCheatSheet, added_by: supabaseUserId, is_deleted: false }])
     .select();
 
   if (error) {
@@ -96,36 +91,10 @@ export async function deleteCheatSheet(id: string): Promise<void> {
   }
 }
 
-export async function getUserRole(userId: string): Promise<string> {
-  const { data, error } = await authClient
-    .from("users")
-    .select("user_role")
-    .eq("id", userId)
-    .single();
-
-  if (error) {
-    console.error("Error fetching user role:", error);
-    return "user";
-  }
-
-  return data?.user_role || "user";
-}
-
-export async function getUserIdFromNextAuth(
-  email: string
-): Promise<string | null> {
-  const { data, error } = await authClient
-    .from("users")
-    .select("id")
-    .eq("email", email)
-    .single();
-
-  if (error) {
-    console.error("Error fetching user ID:", error);
-    return null;
-  }
-
-  return data?.id || null;
+// Export this function
+export async function getCheatSheetUserRole(userId: string): Promise<string> {
+  const role = await getUserRoleFromDB(userId);
+  return role || "user";
 }
 
 export async function getCheatSheetById(

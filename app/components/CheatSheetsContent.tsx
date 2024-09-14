@@ -2,18 +2,26 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { getAllCheatSheets } from "@/app/lib/cheat-sheets";
+import {
+  getAllCheatSheets,
+  getCheatSheetUserRole,
+  CheatSheet,
+} from "@/app/lib/cheat-sheets";
 import CheatSheetGrid from "@/app/components/CheatSheetGrid";
 import { AddCheatSheetModal } from "@/app/components/AddCheatSheetModal";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { Search, Edit } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
+import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
 
 export default function CheatSheetsContent() {
-  const [cheatSheets, setCheatSheets] = useState<any[]>([]);
+  const [cheatSheets, setCheatSheets] = useState<CheatSheet[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
-  const { isSignedIn } = useUser();
+  const [isAdminLoading, setIsAdminLoading] = useState(true);
+  const { user, isSignedIn, isLoaded } = useUser();
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetchCheatSheets = async () => {
@@ -22,27 +30,45 @@ export default function CheatSheetsContent() {
     };
     fetchCheatSheets();
 
-    // You might want to implement a different way to check for admin status
-    // This is just a placeholder
-    setIsAdmin(false);
-  }, []);
+    if (isLoaded && isSignedIn && user) {
+      setIsAdminLoading(true);
+      getCheatSheetUserRole(user.id).then((role) => {
+        setIsAdmin(role === "admin");
+        setIsAdminLoading(false);
+      });
+    } else {
+      setIsAdminLoading(false);
+    }
+  }, [isLoaded, isSignedIn, user]);
 
-  const handleAddCheatSheet = (newCheatSheet: any) => {
+  const handleAddCheatSheet = (newCheatSheet: CheatSheet) => {
     setCheatSheets((prevSheets) => [...prevSheets, newCheatSheet]);
+    toast({
+      title: "Success",
+      description: "Cheat sheet added successfully!",
+    });
   };
 
-  const handleUpdateCheatSheet = (updatedCheatSheet: any) => {
+  const handleUpdateCheatSheet = (updatedCheatSheet: CheatSheet) => {
     setCheatSheets((prevSheets) =>
       prevSheets.map((sheet) =>
         sheet.id === updatedCheatSheet.id ? updatedCheatSheet : sheet
       )
     );
+    toast({
+      title: "Success",
+      description: "Cheat sheet updated successfully!",
+    });
   };
 
   const handleDeleteCheatSheet = (id: string) => {
     setCheatSheets((prevSheets) =>
       prevSheets.filter((sheet) => sheet.id !== id)
     );
+    toast({
+      title: "Success",
+      description: "Cheat sheet deleted successfully!",
+    });
   };
 
   const filteredCheatSheets = cheatSheets.filter(
@@ -85,9 +111,19 @@ export default function CheatSheetsContent() {
         <CheatSheetGrid
           cheatSheets={filteredCheatSheets}
           isAdmin={isAdmin}
-          onAddCheatSheet={handleAddCheatSheet}
+          isAdminLoading={isAdminLoading}
           onUpdateCheatSheet={handleUpdateCheatSheet}
           onDeleteCheatSheet={handleDeleteCheatSheet}
+          renderUpdateButton={(cheatSheet) => (
+            <AddCheatSheetModal
+              cheatSheet={cheatSheet}
+              onUpdateCheatSheet={handleUpdateCheatSheet}
+            >
+              <Button variant="ghost" size="sm">
+                <Edit className="h-4 w-4" />
+              </Button>
+            </AddCheatSheetModal>
+          )}
         />
       </motion.div>
     </div>

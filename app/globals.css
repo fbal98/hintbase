@@ -44,3 +44,93 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Add this at the end of the file */
+.cl-socialButtonsIconButton {
+  @apply bg-muted hover:bg-muted/90;
+}
+
+.cl-socialButtonsBlockButton {
+  @apply bg-muted hover:bg-muted/90 text-foreground;
+}
+
+.cl-footerActionLink {
+  @apply text-primary hover:text-primary/90;
+}
+
+.cl-formButtonPrimary {
+  @apply bg-primary text-primary-foreground hover:bg-primary/90;
+}
+
+/* Override Clerk styles to remove inner card appearance */
+
+.cl-cardBox {
+  box-shadow: none !important;
+
+}
+.cl-internal-b3fm6y {
+  padding: 0 !important;
+}
+
+.cl-headerTitle,
+.cl-headerSubtitle {
+  text-align: center;
+}
+
+.cl-socialButtonsBlockButton {
+  justify-content: center;
+}
+
+.cl-footerActionLink {
+  display: none !important;
+}
+
+/* Add or update these styles for social buttons */
+/*
+.cl-socialButtonsIconButton,
+.cl-socialButtonsBlockButton {
+  background-color: hsl(var(--primary)) !important;
+  color: hsl(var(--primary-foreground)) !important;
+  border-color: hsl(var(--primary)) !important;
+}
+
+.cl-socialButtonsIconButton:hover,
+.cl-socialButtonsBlockButton:hover {
+  background-color: hsl(var(--primary) / 0.9) !important;
+}
+*/
+
+/* Update these styles for social buttons */
+.cl-socialButtonsIconButton,
+.cl-socialButtonsBlockButton {
+  background-color: #F5F5F1 !important;
+  color: hsl(var(--foreground)) !important;
+  border-color: hsl(var(--input)) !important;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.cl-socialButtonsIconButton:hover,
+.cl-socialButtonsBlockButton:hover {
+  background-color: #E5E5E1 !important;
+}
+
+.cl-socialButtonsIconButton svg,
+.cl-socialButtonsBlockButton svg {
+  fill: hsl(var(--foreground));
+  transition: transform 0.3s ease;
+}
+
+.cl-socialButtonsIconButton:hover svg,
+.cl-socialButtonsBlockButton:hover svg {
+  transform: scale(1.1);
+}
+
+/* Keep the icon size adjustment */
+.cl-socialButtonsIconButton svg,
+.cl-socialButtonsBlockButton svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* Remove any conflicting styles */
+
