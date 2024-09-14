@@ -1,13 +1,11 @@
-import { auth } from "@/auth";
-import { UserDashboard } from "../components/UserDashboard";
 import Header from "../components/Header";
 import { redirect } from "next/navigation";
-
+import { useUser } from "@clerk/nextjs";
 export default async function DashboardPage() {
-  const session = await auth();
+  const { user, isSignedIn } = useUser();
 
-  if (!session) {
-    redirect("/signin");
+  if (!isSignedIn) {
+    redirect("/sign-in");
   }
 
   // You'll need to implement these functions to get the actual data
@@ -28,20 +26,28 @@ export default async function DashboardPage() {
     ];
   };
 
-  const stats = await getUserStats(session.user?.id || "");
-  const favoriteCheatSheets = await getFavoriteCheatSheets(
-    session.user?.id || ""
-  );
-
+  x;
   return (
     <>
-      <Header session={session} />
+      <Header />
       <main className="container mx-auto px-4 py-8">
-        <UserDashboard
-          user={session.user as { name: string; email: string; image: string }}
-          stats={stats}
-          favoriteCheatSheets={favoriteCheatSheets}
-        />
+        <div>
+          <h1>Welcome, {user.firstName}!</h1>
+          <h2>Your Stats</h2>
+          <ul>
+            <li>Created Cheat Sheets: {stats.createdCheatSheets}</li>
+            <li>Added Commands: {stats.addedCommands}</li>
+            <li>Favorites: {stats.favorites}</li>
+          </ul>
+          <h2>Favorite Cheat Sheets</h2>
+          <ul>
+            {favoriteCheatSheets.map((sheet) => (
+              <li key={sheet.id}>
+                {sheet.icon} {sheet.name}
+              </li>
+            ))}
+          </ul>
+        </div>
       </main>
     </>
   );

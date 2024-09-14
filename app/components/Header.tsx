@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { SignInButton, useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -10,71 +11,61 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, Settings, User, LayoutDashboard } from "lucide-react";
-import { serverSignOut } from "@/app/actions/auth";
-
-export default function Header({ session }: { session: any }) {
+import { Settings, User, LayoutDashboard, LogOut } from "lucide-react";
+import { useClerk } from "@clerk/nextjs";
+export default function Header() {
   const router = useRouter();
-
-  const handleSignOut = async () => {
-    await serverSignOut();
-    router.push("/"); // Redirect to home page after signing out
-    router.refresh(); // Refresh the current route
-  };
+  const { user, isSignedIn } = useUser();
+  const { signOut } = useClerk();
 
   return (
-    <header className="bg-background border-b">
-      <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <Link href="/" className="text-2xl font-bold text-primary">
-          HintBase
+    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container mx-auto px-4 h-14 flex items-center justify-between">
+        <Link href="/" className="flex items-center space-x-2">
+          <span className="text-2xl font-bold text-primary">HintBase</span>
         </Link>
-        <nav>
-          <ul className="flex space-x-4 items-center">
-            <li>
-              <Link href="/cheat-sheets">Cheat Sheets</Link>
-            </li>
-            {session ? (
-              <li>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Avatar className="w-8 h-8 cursor-pointer">
-                      <AvatarImage
-                        src={session.user.image}
-                        alt={session.user.name}
-                      />
-                      <AvatarFallback>{session.user.name[0]}</AvatarFallback>
-                    </Avatar>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem
-                      onSelect={() => router.push("/dashboard")}
-                    >
-                      <LayoutDashboard className="mr-2 h-4 w-4" />
-                      <span>Dashboard</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onSelect={() => router.push("/profile")}>
-                      <User className="mr-2 h-4 w-4" />
-                      <span>Profile</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onSelect={() => router.push("/settings")}>
-                      <Settings className="mr-2 h-4 w-4" />
-                      <span>Settings</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onSelect={handleSignOut}>
-                      <LogOut className="mr-2 h-4 w-4" />
-                      <span>Logout</span>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </li>
-            ) : (
-              <li>
-                <Link href="/signin" passHref>
-                  <Button variant="outline">Sign In</Button>
-                </Link>
-              </li>
-            )}
-          </ul>
+        <nav className="flex items-center space-x-6 text-sm font-medium">
+          <Link
+            href="/cheat-sheets"
+            className="text-foreground/60 hover:text-foreground"
+          >
+            Cheat Sheets
+          </Link>
+          {isSignedIn ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Avatar className="w-8 h-8 cursor-pointer">
+                  <AvatarImage
+                    src={user?.imageUrl}
+                    alt={user?.fullName || ""}
+                  />
+                  <AvatarFallback>{user?.firstName?.[0]}</AvatarFallback>
+                </Avatar>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => router.push("/dashboard")}>
+                  <LayoutDashboard className="mr-2 h-4 w-4" />
+                  <span>Dashboard</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => router.push("/profile")}>
+                  <User className="mr-2 h-4 w-4" />
+                  <span>Profile</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => router.push("/settings")}>
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Settings</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => signOut()}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Sign Out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <SignInButton mode="modal">
+              <Button variant="ghost">Sign In</Button>
+            </SignInButton>
+          )}
         </nav>
       </div>
     </header>

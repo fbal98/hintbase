@@ -2,20 +2,18 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import {
-  getAllCheatSheets,
-  getUserRole,
-  getUserIdFromNextAuth,
-} from "@/app/lib/cheat-sheets";
+import { getAllCheatSheets } from "@/app/lib/cheat-sheets";
 import CheatSheetGrid from "@/app/components/CheatSheetGrid";
 import { AddCheatSheetModal } from "@/app/components/AddCheatSheetModal";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
+import { useUser } from "@clerk/nextjs";
 
-export default function CheatSheetsContent({ session }: { session: any }) {
+export default function CheatSheetsContent() {
   const [cheatSheets, setCheatSheets] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
+  const { isSignedIn } = useUser();
 
   useEffect(() => {
     const fetchCheatSheets = async () => {
@@ -24,17 +22,10 @@ export default function CheatSheetsContent({ session }: { session: any }) {
     };
     fetchCheatSheets();
 
-    const checkAdminStatus = async () => {
-      if (session?.user?.email) {
-        const userId = await getUserIdFromNextAuth(session.user.email);
-        if (userId) {
-          const role = await getUserRole(userId);
-          setIsAdmin(role === "admin");
-        }
-      }
-    };
-    checkAdminStatus();
-  }, [session]);
+    // You might want to implement a different way to check for admin status
+    // This is just a placeholder
+    setIsAdmin(false);
+  }, []);
 
   const handleAddCheatSheet = (newCheatSheet: any) => {
     setCheatSheets((prevSheets) => [...prevSheets, newCheatSheet]);
@@ -81,11 +72,8 @@ export default function CheatSheetsContent({ session }: { session: any }) {
             size={18}
           />
         </div>
-        {session && (
-          <AddCheatSheetModal
-            onAddCheatSheet={handleAddCheatSheet}
-            session={session}
-          />
+        {isSignedIn && (
+          <AddCheatSheetModal onAddCheatSheet={handleAddCheatSheet} />
         )}
       </motion.div>
 
@@ -100,7 +88,6 @@ export default function CheatSheetsContent({ session }: { session: any }) {
           onAddCheatSheet={handleAddCheatSheet}
           onUpdateCheatSheet={handleUpdateCheatSheet}
           onDeleteCheatSheet={handleDeleteCheatSheet}
-          session={session}
         />
       </motion.div>
     </div>

@@ -8,7 +8,6 @@ interface CheatSheetGridProps {
   onAddCheatSheet: (cheatSheet: any) => void;
   onUpdateCheatSheet: (updatedCheatSheet: any) => void;
   onDeleteCheatSheet: (id: string) => void;
-  session: any;
 }
 
 export default function CheatSheetGrid({
@@ -16,7 +15,6 @@ export default function CheatSheetGrid({
   isAdmin,
   onUpdateCheatSheet,
   onDeleteCheatSheet,
-  session,
 }: CheatSheetGridProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -32,7 +30,6 @@ export default function CheatSheetGrid({
                   onAddCheatSheet={onUpdateCheatSheet}
                   onUpdateCheatSheet={onUpdateCheatSheet}
                   onDeleteCheatSheet={onDeleteCheatSheet}
-                  session={session}
                   cheatSheet={cheatSheet}
                 />
               )}

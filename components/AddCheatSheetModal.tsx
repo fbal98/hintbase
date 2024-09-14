@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -23,18 +23,16 @@ import {
   addCheatSheet,
   updateCheatSheet,
   deleteCheatSheet,
-  getUserIdFromNextAuth,
-  getUserRole,
 } from "@/app/lib/cheat-sheets";
 import { useToast } from "@/hooks/use-toast";
 import { emojiOptions } from "@/app/lib/emoji-options";
 import Link from "next/link";
+import { useUser } from "@clerk/nextjs";
 
 interface AddCheatSheetModalProps {
   onAddCheatSheet: (newCheatSheet: any) => void;
   onUpdateCheatSheet?: (updatedCheatSheet: any) => void;
   onDeleteCheatSheet?: (id: string) => void;
-  session: any;
   cheatSheet?: any; // For editing existing cheat sheets
 }
 
@@ -42,7 +40,6 @@ export function AddCheatSheetModal({
   onAddCheatSheet,
   onUpdateCheatSheet,
   onDeleteCheatSheet,
-  session,
   cheatSheet,
 }: AddCheatSheetModalProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -54,39 +51,21 @@ export function AddCheatSheetModal({
     cheatSheet ? JSON.stringify(cheatSheet.sections) : ""
   );
   const [isLoading, setIsLoading] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
   const { toast } = useToast();
-
-  useEffect(() => {
-    const checkAdminStatus = async () => {
-      if (session?.user?.email) {
-        const userId = await getUserIdFromNextAuth(session.user.email);
-        if (userId) {
-          const role = await getUserRole(userId);
-          setIsAdmin(role === "admin");
-        }
-      }
-    };
-    checkAdminStatus();
-  }, [session]);
+  const { user, isSignedIn } = useUser();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (session?.user?.email) {
+    if (isSignedIn && user) {
       setIsLoading(true);
       try {
-        const userId = await getUserIdFromNextAuth(session.user.email);
-        if (!userId) {
-          throw new Error("User not found");
-        }
-
         const cheatSheetData = {
           title,
           name,
           description,
           icon,
           sections: JSON.parse(jsonInput),
-          added_by: userId,
+          added_by: user.id,
         };
 
         let result;
@@ -151,7 +130,7 @@ export function AddCheatSheetModal({
     }
   };
 
-  if (!session) {
+  if (!isSignedIn) {
     return null;
   }
 
@@ -258,7 +237,7 @@ export function AddCheatSheetModal({
                 ? "Update Cheat Sheet"
                 : "Add Cheat Sheet"}
             </Button>
-            {isAdmin && cheatSheet && (
+            {isSignedIn && user?.role === "admin" && cheatSheet && (
               <Button
                 type="button"
                 variant="destructive"

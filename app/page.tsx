@@ -1,18 +1,15 @@
 import { Suspense } from "react";
-import { auth } from "@/auth";
 import { HomeContent } from "./components/HomeContent";
 import Header from "./components/Header";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default async function Home() {
-  const session = await auth();
-
   return (
     <>
-      <Header session={session} />
+      <Header />
       <main className="container mx-auto px-4 py-8">
         <Suspense fallback={<HomeContentSkeleton />}>
-          <HomeContent session={session} />
+          <HomeContent />
         </Suspense>
       </main>
     </>

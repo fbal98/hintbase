@@ -9,9 +9,11 @@ import { Input } from "@/components/ui/input";
 import CheatSheetGrid from "./CheatSheetGrid";
 import { AddCheatSheetModal } from "./AddCheatSheetModal";
 import { getAllCheatSheets, CheatSheet } from "../lib/cheat-sheets";
+import { useUser } from "@clerk/nextjs";
 
-export function HomeContent({ session }: { session: any }) {
+export function HomeContent() {
   const [cheatSheets, setCheatSheets] = useState<CheatSheet[]>([]);
+  const { isSignedIn } = useUser();
 
   useEffect(() => {
     const fetchCheatSheets = async () => {
@@ -96,11 +98,8 @@ export function HomeContent({ session }: { session: any }) {
       <section>
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold">Popular Cheat Sheets</h2>
-          {session && (
-            <AddCheatSheetModal
-              onAddCheatSheet={handleAddCheatSheet}
-              session={session}
-            />
+          {isSignedIn && (
+            <AddCheatSheetModal onAddCheatSheet={handleAddCheatSheet} />
           )}
         </div>
         <CheatSheetGrid
@@ -109,7 +108,6 @@ export function HomeContent({ session }: { session: any }) {
           onAddCheatSheet={() => {}}
           onUpdateCheatSheet={() => {}}
           onDeleteCheatSheet={() => {}}
-          session={session}
         />
         <div className="text-center mt-8">
           <Link href="/cheat-sheets" passHref>
@@ -122,7 +120,7 @@ export function HomeContent({ session }: { session: any }) {
       </section>
 
       {/* Call to Action (only shown when not signed in) */}
-      {!session && (
+      {!isSignedIn && (
         <section className="bg-primary text-primary-foreground p-12 rounded-lg text-center">
           <h2 className="text-3xl font-bold mb-4">
             Start Boosting Your Productivity Today

@@ -2,26 +2,32 @@
 
 import * as React from "react";
 import { useState } from "react";
-import { signIn } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { Github } from "lucide-react";
+import { SignIn, useSignIn } from "@clerk/nextjs";
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { signIn, isLoaded } = useSignIn();
 
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault();
     setIsLoading(true);
 
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 3000);
+    // Add your Clerk sign-in logic here
+    // For example:
+    // await signIn.create({
+    //   identifier: email,
+    //   password,
+    // });
+
+    setIsLoading(false);
   }
 
   return (
@@ -63,13 +69,18 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
         type="button"
         disabled={isLoading}
         onClick={() => {
-          "use server";
           setIsLoading(true);
-          signIn("github");
+          // Add your Clerk OAuth sign-in logic here
+          // For example:
+          // signIn.authenticateWithRedirect({
+          //   strategy: "oauth_github",
+          //   redirectUrl: "/sso-callback",
+          //   redirectUrlComplete: "/",
+          // });
         }}
       >
         {isLoading ? (
-          <LoadingSpinner className="mr-2 h-4 w-4" /> // Replace Icons.spinner with LoadingSpinner
+          <LoadingSpinner className="mr-2 h-4 w-4" />
         ) : (
           <Github className="mr-2 h-4 w-4" />
         )}{" "}
