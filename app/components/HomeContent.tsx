@@ -17,11 +17,13 @@ import {
 import { useUser } from "@clerk/nextjs";
 import { AddCheatSheetModal } from "./AddCheatSheetModal";
 import { useToast } from "@/hooks/use-toast";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const HomeContent: React.FC = () => {
   const [cheatSheets, setCheatSheets] = useState<CheatSheet[]>([]);
   const { user, isSignedIn, isLoaded } = useUser();
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdminLoading, setIsAdminLoading] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -32,9 +34,13 @@ export const HomeContent: React.FC = () => {
     fetchCheatSheets();
 
     if (isLoaded && isSignedIn && user) {
-      getCheatSheetUserRole(user.id).then((role) =>
-        setIsAdmin(role === "admin")
-      );
+      setIsAdminLoading(true);
+      getCheatSheetUserRole(user.id).then((role) => {
+        setIsAdmin(role === "admin");
+        setIsAdminLoading(false);
+      });
+    } else {
+      setIsAdminLoading(false);
     }
   }, [isLoaded, isSignedIn, user]);
 
@@ -176,12 +182,13 @@ export const HomeContent: React.FC = () => {
                 </Button>
               )
             ) : (
-              <Button disabled>Loading...</Button>
+              <Skeleton className="h-10 w-32" />
             )}
           </div>
           <CheatSheetGrid
             cheatSheets={cheatSheets.slice(0, 6)}
             isAdmin={isAdmin}
+            isAdminLoading={isAdminLoading}
             onUpdateCheatSheet={handleUpdateCheatSheet}
             onDeleteCheatSheet={handleDeleteCheatSheet}
             renderUpdateButton={(cheatSheet) => (
@@ -189,7 +196,7 @@ export const HomeContent: React.FC = () => {
                 cheatSheet={cheatSheet}
                 onUpdateCheatSheet={handleUpdateCheatSheet}
               >
-                <Button variant="outline" size="sm">
+                <Button variant="ghost" size="sm">
                   <Edit className="h-4 w-4" />
                 </Button>
               </AddCheatSheetModal>
@@ -206,20 +213,24 @@ export const HomeContent: React.FC = () => {
         </section>
 
         {/* Call to Action */}
-        {isLoaded && !isSignedIn && (
-          <section className="bg-primary text-primary-foreground p-12 rounded-lg text-center">
-            <h2 className="text-3xl font-bold mb-4">
-              Start Boosting Your Productivity Today
-            </h2>
-            <p className="text-xl mb-6">
-              Join HintBase and never forget a command again.
-            </p>
-            <Link href="/sign-up" passHref>
-              <Button variant="secondary" size="lg">
-                Sign Up for Free
-              </Button>
-            </Link>
-          </section>
+        {isLoaded ? (
+          !isSignedIn && (
+            <section className="bg-primary text-primary-foreground p-12 rounded-lg text-center">
+              <h2 className="text-3xl font-bold mb-4">
+                Start Boosting Your Productivity Today
+              </h2>
+              <p className="text-xl mb-6">
+                Join HintBase and never forget a command again.
+              </p>
+              <Link href="/sign-up" passHref>
+                <Button variant="secondary" size="lg">
+                  Sign Up for Free
+                </Button>
+              </Link>
+            </section>
+          )
+        ) : (
+          <Skeleton className="h-64 w-full" />
         )}
       </div>
     </>

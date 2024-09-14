@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Settings, User, LayoutDashboard, LogOut } from "lucide-react";
 import { useClerk } from "@clerk/nextjs";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Header() {
   const router = useRouter();
@@ -83,7 +84,9 @@ export default function Header() {
                 </Link>
               </div>
             )
-          ) : null}
+          ) : (
+            <Skeleton className="h-10 w-20" />
+          )}
         </nav>
       </div>
     </header>
