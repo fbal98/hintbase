@@ -63,6 +63,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
         type="button"
         disabled={isLoading}
         onClick={() => {
+          "use server";
           setIsLoading(true);
           signIn("github");
         }}
