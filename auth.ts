@@ -13,8 +13,8 @@ if (!process.env.AUTH_GITHUB_ID || !process.env.AUTH_GITHUB_SECRET) {
 }
 
 if (
-  !process.env.AUTH_SUPABASE_URL ||
-  !process.env.AUTH_SUPABASE_SERVICE_ROLE_KEY
+  !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+  !process.env.SUPABASE_SERVICE_ROLE_KEY
 ) {
   throw new Error(
     "Supabase credentials are not set in the environment variables"
@@ -29,8 +29,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   adapter: SupabaseAdapter({
-    url: process.env.AUTH_SUPABASE_URL,
-    secret: process.env.AUTH_SUPABASE_SERVICE_ROLE_KEY,
+    url: process.env.NEXT_PUBLIC_SUPABASE_URL,
+    secret: process.env.SUPABASE_SERVICE_ROLE_KEY,
   }),
   secret: process.env.AUTH_SECRET,
 });
